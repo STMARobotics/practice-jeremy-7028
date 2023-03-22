@@ -35,6 +35,7 @@ public class RobotContainer {
     drivetrainSubsystem.setDefaultCommand(new DriveCommand(
         () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1),
         () -> MathUtil.applyDeadband(-controller.getRightX(), 0.1) * .7,
+        () -> true,
         drivetrainSubsystem));
   }
 
@@ -59,7 +60,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new RunCommand(() -> drivetrainSubsystem.drive(1, 0, false), drivetrainSubsystem).withTimeout(1.5)
+    return new DriveCommand(() -> -1, () -> 0, () -> false, drivetrainSubsystem).withTimeout(1.5)
         .andThen(new JackhammerCommand(pistonSubsystem));
   }
 }

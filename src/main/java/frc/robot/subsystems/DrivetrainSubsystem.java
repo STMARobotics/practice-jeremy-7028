@@ -43,9 +43,5 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void drive(double speed, double rotation, boolean squareInputs) {
         diffDrive.arcadeDrive(speed, rotation, squareInputs);
     }
-    
-    public void drive(double speed, double rotation) {
-        drive(speed, rotation, true);
-    }
 
 }
