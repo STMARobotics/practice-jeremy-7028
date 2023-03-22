@@ -20,12 +20,13 @@ public class JackhammerCommand extends CommandBase {
     @Override
     public void initialize() {
         pistonSubsystem.retract();
+        timer.reset();
         timer.start();
     }
 
     @Override
     public void execute() {
-        if (timer.get() >= .5) {
+        if (timer.advanceIfElapsed(.5)) {
             if (extended) {
                 pistonSubsystem.retract();
             } else {

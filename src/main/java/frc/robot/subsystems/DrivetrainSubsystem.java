@@ -26,6 +26,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         leftLeader.configFactoryDefault();
         leftFollower.configFactoryDefault();
 
+        rightLeader.setInverted(true);
+        rightFollower.setInverted(true);
+
         rightLeader.setNeutralMode(NeutralMode.Brake);
         rightFollower.setNeutralMode(NeutralMode.Brake);
         leftLeader.setNeutralMode(NeutralMode.Brake);

@@ -9,12 +9,11 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.PistonSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -27,13 +26,16 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
   private final PistonSubsystem pistonSubsystem = new PistonSubsystem();
-  private final XboxController controller = new XboxController(0);
+  private final CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureBindings();
     CameraServer.startAutomaticCapture();
-    drivetrainSubsystem.setDefaultCommand(new DriveCommand(controller, drivetrainSubsystem));
+    drivetrainSubsystem.setDefaultCommand(new DriveCommand(
+        () -> MathUtil.applyDeadband(-controller.getLeftY(), 0.1),
+        () -> MathUtil.applyDeadband(-controller.getRightX(), 0.1) * .7,
+        drivetrainSubsystem));
   }
 
   /**
@@ -46,9 +48,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(Commands.runOnce(pistonSubsystem::extend, pistonSubsystem));
-    new JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(Commands.runOnce(pistonSubsystem::retract, pistonSubsystem));
-    new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new JackhammerCommand(pistonSubsystem));
+    controller.leftBumper().onTrue(Commands.runOnce(pistonSubsystem::extend, pistonSubsystem));
+    controller.rightBumper().onTrue(Commands.runOnce(pistonSubsystem::retract, pistonSubsystem));
+    controller.a().whileTrue(new JackhammerCommand(pistonSubsystem));
   }
 
   /**
@@ -57,6 +59,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new RunCommand(() -> drivetrainSubsystem.drive(0, -1, false), drivetrainSubsystem).withTimeout(1.5).andThen(new JackhammerCommand(pistonSubsystem));
+    return new RunCommand(() -> drivetrainSubsystem.drive(1, 0, false), drivetrainSubsystem).withTimeout(1.5)
+        .andThen(new JackhammerCommand(pistonSubsystem));
   }
 }
