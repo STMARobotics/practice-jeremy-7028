@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.PistonSubsystem;
 
-public class CoolCommand extends CommandBase {
+public class JackhammerCommand extends CommandBase {
     
     private final PistonSubsystem pistonSubsystem;
 
     private boolean extended = false;
     private Timer timer = new Timer();
 
-    public CoolCommand(PistonSubsystem pistonSubsystem) {
+    public JackhammerCommand(PistonSubsystem pistonSubsystem) {
         this.pistonSubsystem = pistonSubsystem;
 
         addRequirements(pistonSubsystem);
